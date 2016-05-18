@@ -1,0 +1,16 @@
+---
+- hosts: 'pi-v3'
+  tasks:
+    - shell: "docker stop $(docker ps -a -q) || true"
+    - shell: "docker rm $(docker ps -a -q) || true"
+    - shell: "docker rmi -f $(docker images -q --filter \"dangling=true\") || true"
+
+    - name: python-face-controller container
+      docker:
+        name: face
+        image: awalach/python-camera-robo-arm-control:master
+        state: started
+        command: /opt/face/run.sh
+        pull: always
+        privileged: true
+        ports: 80:80
